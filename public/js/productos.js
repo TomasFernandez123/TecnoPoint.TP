@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         mostrarCategorias(categorias, productos);
         mostrarProductos(productos);
+
     } catch (err) {
         console.log("Error al cargar datos:", err);
     } finally {
@@ -26,8 +27,8 @@ function mostrarProductos(json) {
     contenedor.innerHTML = "";
 
     json.forEach(producto => {
-        contenedor.innerHTML += 
-        `
+        contenedor.innerHTML +=
+            `
         <div class="col-md-6 " data-aos="fade-up">
             <div class="card mb-4">
                 <img src="${producto.image}" class="card-img-top" alt="${producto.title}" style="width: 200px; height: 200px; object-fit: cover; margin: auto;">
@@ -36,7 +37,7 @@ function mostrarProductos(json) {
                     <p class="card-text" style="height: 90px; overflow: hidden; text-overflow: ellipsis;">${producto.description}</p>
                     <p class="card-text"><strong>Precio: ${producto.price}</strong></p>
                     <div class="d-flex align-items-center justify-content-center gap-2">
-                        <button class="agregar btn btn-primary">Agregar al carrito</button>
+                        <button class="agregar btn btn-primary" data-id="${producto.id}">Agregar al carrito</button>
                         <div class="input-group" style="max-width: 160px;">
                             <button class="resta btn btn-outline-secondary" type="button">-</button>
                             <input type="number" class="cantidad form-control text-center" value="1" min="1">
@@ -81,7 +82,7 @@ function mostrarCategorias(categorias, productos) {
         });
         contenedor.appendChild(btn);
     });
-    
+
 }
 
 function marcarActivo(botonClickeado) {
@@ -95,20 +96,6 @@ function agregarEventos() {
     const sumaButtons = document.querySelectorAll(".sum");
     const restaButtons = document.querySelectorAll(".resta");
     const cantidadInputs = document.querySelectorAll(".cantidad");
-
-    const botonesAgregar = document.querySelectorAll(".agregar");
-
-    botonesAgregar.forEach(btn => {
-        btn.addEventListener("click", () => {
-            Swal.fire({
-                icon: 'success',
-                title: '¡Agregado!',
-                text: 'El producto fue añadido al carrito.',
-                showConfirmButton: false,
-                timer: 1000
-            });
-        });
-    })
 
     sumaButtons.forEach((btn, index) => {
         btn.addEventListener("click", () => {
@@ -125,4 +112,48 @@ function agregarEventos() {
             }
         });
     });
+
+    document.querySelectorAll(".agregar").forEach(btn => {
+        btn.addEventListener("click", async () => {
+            const idProducto = btn.getAttribute("data-id");
+
+            const cantidad = btn.parentElement.querySelector(".cantidad").value;
+
+            try {
+                const res = await fetch(`https://fakestoreapi.com/products/${idProducto}`);
+                const data = await res.json(); 
+
+                const producto = {
+                    id: data.id.toString(),
+                    nombre: data.title,
+                    cantidad: parseInt(cantidad),
+                    precio: parseFloat(data.price)
+                };
+
+                let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+                const productoExistente = carrito.find(item => item.id == producto.id);
+                if (productoExistente) {
+                    productoExistente.cantidad += producto.cantidad;
+                } else {
+                    carrito.push(producto);
+                }
+
+                localStorage.setItem("carrito", JSON.stringify(carrito));
+
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Agregado!',
+                    text: 'El producto fue añadido al carrito.',
+                    showConfirmButton: false,
+                    timer: 1000
+                });
+            } catch (error) {
+                console.error("Error al obtener la cantidad:", error);
+            }
+
+
+        })
+    })
 }
+
