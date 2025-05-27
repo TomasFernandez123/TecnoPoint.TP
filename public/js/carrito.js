@@ -23,8 +23,18 @@ function mostrarCarrito() {
         });
         document.getElementById("total").innerText = "Total: " +  (carritoGuardado.reduce((total, item) => total + (item.precio * item.cantidad), 0)).toFixed(2) + " €";
 
+        document.querySelectorAll(".eliminar-item").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const itemId = btn.getAttribute("data-id");
+                const carritoActualizado = carritoGuardado.filter(item => item.id !== itemId);
+                localStorage.setItem("carrito", JSON.stringify(carritoActualizado));
+                mostrarCarrito();
+            })
+        })
+
     } else {
         contenedorCarrito.innerHTML = "<tr><td colspan='5' class='text-center'>El carrito está vacío</td></tr>";
+        document.getElementById("total").innerText = "Total: 0.00 €";
     }
 }
 
