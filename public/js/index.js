@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() { 
+    AOS.init();
     document.getElementById("form-nombre").addEventListener("submit", function(event) {
         event.preventDefault();
 
