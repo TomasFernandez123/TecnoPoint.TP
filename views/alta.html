@@ -7,7 +7,6 @@
     <title>TecnoPoint</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../public/css/style.css">
-    <script src="../public/js/admin.js"></script>
 </head>
 
 <body class="d-flex flex-column min-vh-100 bg-light">
@@ -22,33 +21,43 @@
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
-                    <li class="nav-item "><a class="nav-link disabled" href="#">Productos</a></li>
-                    <li class="nav-item"><a class="nav-link disabled" href="#">Carrito</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="#">Admin</a></li>
+                    <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+                    <li class="nav-item "><a class="nav-link active" href="#">Alta producto</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Contenido principal -->
-    <main class="container flex-grow-1 d-flex flex-column justify-content-center align-items-center text-center">
-        <div style="max-width: 600px; width: 100%;">
-            <h1 class="fw-bold text-primary-emphasis">Bienvenido a TecnoPoint</h1>
-            <p class="text-secondary fs-5 mb-4">inicie sesión para continuar</p>
-
-            <form id="form-login" style="width: 77%; margin: auto;">
+    <main class="mb-5">
+        <form id="form-modificacion">
+            <div class="container mt-4">
+                <h1 class="text-center mb-4">Alta de Producto</h1>
                 <div class="mb-3">
-                    <input id="email" type="text" class="form-control text-center" placeholder="Jhon@example.com" required>
+                    <label for="nombre" class="form-label">Nombre del Producto</label>
+                    <input type="text" class="form-control" id="nombre" placeholder="Ingrese el nombre del producto" required>
                 </div>
-
                 <div class="mb-3">
-                    <input id="password" type="password" class="form-control text-center" placeholder="Password" required>
+                    <label for="precio" class="form-label">Precio del Producto</label>
+                    <input type="number" class="form-control" id="precio" placeholder="Ingrese el precio del producto" required>
                 </div>
-                <button type="submit" class="btn btn-black w-100">Enviar</button>
-            </form>
-        </div>
+                <div class="mb-3">
+                    <label for="precio" class="form-label">Descripción del Producto</label>
+                    <input type="text" class="form-control" id="descripcion" placeholder="Ingrese la descripción del producto" required>
+                </div>
+                <div class="mb-3">
+                    <label for="precio" class="form-label">Categoria</label>
+                    <input type="text" class="form-control" id="descripcion" placeholder="Ingrese la descripción del producto" required>
+                </div>
+                <div class="mb-3">
+                    <label for="foto" class="form-label">Foto del Producto (URL)</label>
+                    <input type="text" class="form-control" id="foto" placeholder="Ingrese la URL de la foto del producto">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Modificar Producto</button>
+            </div>
+        </form>
     </main>
+    
+
 
     <!-- Footer pegado abajo -->
     <footer class="bg-dark text-light text-center">
