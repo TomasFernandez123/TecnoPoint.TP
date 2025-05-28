@@ -20,5 +20,11 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .nav-link:hover {
-  color: #0d6efd; 
+  color: #0d6efd;
+}
+
+@media print {
+  .no-imprimir {
+    display: none !important;
+  }
 }

@@ -35,7 +35,7 @@ function mostrarProductos(json) {
                 <div class="card-body">
                     <h5 class="card-title">${producto.title}</h5>
                     <p class="card-text" style="height: 90px; overflow: hidden; text-overflow: ellipsis;">${producto.description}</p>
-                    <p class="card-text"><strong>Precio: ${producto.price}</strong></p>
+                    <p class="card-text"><strong>Precio: $${producto.price}</strong></p>
                     <div class="d-flex align-items-center justify-content-center gap-2">
                         <button class="agregar btn btn-primary" data-id="${producto.id}">Agregar al carrito</button>
                         <div class="input-group" style="max-width: 160px;">

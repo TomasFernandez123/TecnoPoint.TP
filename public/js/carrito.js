@@ -14,9 +14,9 @@ function mostrarCarrito() {
             contenedorCarrito.innerHTML += `
             <tr>
                 <td>${item.nombre}</td>
-                <td>${item.precio.toFixed(2)} €</td>
-                <td>${item.cantidad}</td>
-                <td>${(item.precio * item.cantidad).toFixed(2)} €</td>
+                <td>${item.precio.toFixed(2)} $</td>
+                <td class="text-center">${item.cantidad}</td>
+                <td>${(item.precio * item.cantidad).toFixed(2)} $</td>
                 <td><button class="btn btn-danger btn-sm eliminar-item" data-id="${item.id}">Eliminar</button></td>
             </tr>
             `
@@ -34,7 +34,7 @@ function mostrarCarrito() {
 
     } else {
         contenedorCarrito.innerHTML = "<tr><td colspan='5' class='text-center'>El carrito está vacío</td></tr>";
-        document.getElementById("total").innerText = "Total: 0.00 €";
+        document.getElementById("total").innerText = "Total: 0.00 $";
     }
 }
 
