@@ -10,6 +10,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     } catch (err) {
         console.log("Error al cargar datos:", err);
+    } finally {
+        document.getElementById("spinner").style.display = "none";
     }
 });
 
@@ -45,15 +47,52 @@ function agregarEventos() {
 
     btnEliminar.forEach(btn => {
         btn.addEventListener("click", (e) => {
-            const fila = e.target.closest("tr");
-            if (confirm("¿Estás seguro de que deseas eliminar este producto?")) {
-                if (fila) {
-                    fila.remove();
-                    alert("Producto eliminado correctamente.");
-                } else {
-                    alert("Error al eliminar el producto.");
+            e.preventDefault(); // Evitar comportamiento no deseado
+
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: 'Esta acción eliminará el producto permanentemente.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const idProducto = e.target.getAttribute("data-id");
+
+                    try {
+                        const res = await fetch(`https://fakestoreapi.com/${idProducto}`, {
+                            method: 'DELETE',
+                        });
+
+                        // if (!res.ok) {
+                        //     throw new Error("No se pudo eliminar el producto.");
+                        // }
+
+                        // Eliminar la fila de la tabla
+                        const fila = e.target.closest("tr");
+                        if (fila) {
+                            fila.remove();
+                        }
+
+                        // Mostrar mensaje de éxito
+                        await Swal.fire(
+                            '¡Eliminado!',
+                            'El producto fue eliminado correctamente.',
+                            'success'
+                        );
+
+                    } catch (err) {
+                        Swal.fire(
+                            'Error',
+                            'No se pudo eliminar el producto. Intenta nuevamente.',
+                            'error'
+                        );
+                    }
                 }
-            }
+            });
         });
     });
 
