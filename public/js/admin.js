@@ -1,4 +1,9 @@
 document.addEventListener("DOMContentLoaded", async () => {
+    
+    sessionStorage.removeItem("admin");
+    
+    AOS.init();
+
     objResgistrado = {email: "tecnopoint@gmail.com", password: "12345678"};
 
     const form = document.getElementById("form-login");
@@ -8,9 +13,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         const password = document.getElementById("password").value;
 
         if (email === objResgistrado.email && password === objResgistrado.password) {
+            sessionStorage.setItem("admin", "activo");
             window.location.href = "dashboard.html";
         } else {
-            alert("Email o contraseña invalido.");
+            Swal.fire("Acceso denegado", "Usuario o contraseña incorrectos", "error");
         }
     });
 })

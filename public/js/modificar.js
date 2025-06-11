@@ -1,10 +1,12 @@
+if (sessionStorage.getItem("admin") !== "activo") {
+    window.location.href = "admin.html";
+}
 document.addEventListener('DOMContentLoaded', async () => {
     const idProducto = localStorage.getItem('idProducto');
 
+
     if (!idProducto) {
-        alert('No se encontró el ID del producto. Por favor, vuelve a la página anterior.');
         window.location.href = 'dashboard.html';
-        return;
     }
 
     try {
@@ -29,8 +31,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     document.getElementById('form-modificar').addEventListener('submit', async (e) => {
-
-
 
         e.preventDefault();
 
@@ -78,6 +78,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             await Swal.fire('¡Modificado!', 'Los cambios se guardaron correctamente.', 'success');
+
+            localStorage.removeItem("idProducto");
             window.location.href = 'dashboard.html';
 
         } catch (error) {

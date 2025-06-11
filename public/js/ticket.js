@@ -1,8 +1,12 @@
+if (!sessionStorage.getItem("nombre")) {
+    window.location.href = "index.html";
+}
+
 document.addEventListener("DOMContentLoaded", () => {
 
     // Obtiene los datos guardados en el localStorage
     const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-    const nombreCliente = localStorage.getItem("nombre") || "Cliente desconocido";
+    const nombreCliente = sessionStorage.getItem("nombre") || "Cliente desconocido";
 
     // Muestra el nombre del cliente
     document.getElementById("clienteNombre").textContent = `Nombre: ${nombreCliente}`;
@@ -30,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("salir").addEventListener("click", () => {
         localStorage.removeItem("carrito");
-        localStorage.removeItem("nombre");
+        sessionStorage.removeItem("nombre");
         window.location.href = "index.html";
     });
 

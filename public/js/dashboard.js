@@ -1,6 +1,8 @@
+if (sessionStorage.getItem("admin") !== "activo") {
+    window.location.href = "admin.html";
+}
 document.addEventListener("DOMContentLoaded", async () => {
-    //Eliminar el localStorage al cargar la página
-    localStorage.removeItem("idProducto");
+
 
     try {
         const resProductos = await fetch('https://fakestoreapi.com/products');
