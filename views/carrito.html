@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,12 +10,15 @@
     <script src="../public/js/carrito.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<body>
+
+<body class="d-flex flex-column bg-body-tertiary min-vh-100">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light">
+    <nav class="navbar navbar-expand-lg bg-white shadow-sm">
         <div class="container-fluid">
-            <a class="navbar-brand" href="index.html"><img src="../public/assets/logo.png" alt="Logo TecnoPoint" class="navbar-brand-logo">
-                TecnoPoint</a>
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <img src="../public/assets/logo.png" alt="Logo TecnoPoint" class="navbar-brand-logo" width="30" height="30" />
+                <strong>TecnoPoint</strong>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -22,25 +26,26 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
-                    <li class="nav-item "><a class="nav-link" href="productos.html">Productos</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="#">Carrito</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Admin</a></li>
+                    <li class="nav-item"><a class="nav-link" href="productos.html">Productos</a></li>
+                    <li class="nav-item"><a class="nav-link active fw-semibold" href="#">Carrito</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <main class="container" style="margin-bottom: 133px;">
-        <h1 class="text-center my-4">Carrito de Compras</h1>
-        <div id="carrito" class="table-responsive">
-            <table class="table table-striped table-hover">
-                <thead class="table-dark">
+    <!-- Contenido principal -->
+    <main class="container py-5 flex-grow-1">
+        <h1 class="fw-bold text-primary text-center mb-4">Carrito de Compras</h1>
+
+        <div id="carrito">
+            <table class="table table-striped align-middle">
+                <thead class="table-dark text-start">
                     <tr>
-                        <th>Producto</th>
-                        <th>Precio</th>
-                        <th class="text-center">Cantidad</th>
-                        <th>Subtotal</th>
-                        <th>Acciones</th>
+                        <th scope="col">Producto</th>
+                        <th scope="col">Precio</th>
+                        <th class="text-center" scope="col">Cantidad</th>
+                        <th scope="col">Subtotal</th>
+                        <th scope="col">Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="carrito-items">
@@ -48,17 +53,19 @@
                 </tbody>
             </table>
         </div>
-        <div class="text-end d-flex justify-content-end gap-5">
+
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-4">
             <div>
-                <h3>Ticket</h3> 
+                <h4 class="fw-bold">Ticket</h4>
                 <a id="generarTicket" class="btn btn-success">Generar Ticket</a>
             </div>
-            <div>
-                <h3 id="total"></h3> 
-                <button id="vaciar-carrito" class="btn btn-danger">Vaciar Carrito</button>
+            <div class="text-end">
+                <h4 id="total" class="fw-bold text-secondary"></h4>
+                <button id="vaciar-carrito" class="btn btn-danger mt-2">Vaciar Carrito</button>
             </div>
         </div>
     </main>
+
 
 
     <!-- Footer pegado abajo -->
@@ -77,4 +84,5 @@
         integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
         crossorigin="anonymous"></script>
 </body>
+
 </html>

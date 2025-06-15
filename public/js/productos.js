@@ -4,26 +4,23 @@ function verificarSesion() {
     }
 }
 
-const API_BASE = "https://fakestoreapi.com";
+const API_BASE = "http://localhost:3000";
 
 async function obtenerProductos() {
-    const res = await fetch(`http://localhost:3000/api/productos`);
-    return await res.json();
-}
-
-async function obtenerCategorias() {
-    const res = await fetch(`${API_BASE}/products/categories`);
+    const res = await fetch(`${API_BASE}/api/productos`);
     return await res.json();
 }
 
 async function obtenerProductoPorId(id) {
-    const res = await fetch(`${API_BASE}/products/${id}`);
+    const res = await fetch(`${API_BASE}/api/productos/${id}`);
     return await res.json();
 }
 
 async function obtenerProductosPorCategoria(cat) {
-    const res = await fetch(`${API_BASE}/products/category/${cat}`);
-    return await res.json();
+    const res = await obtenerProductos();
+
+    const resFiltrados = res.filter(p => p.categoria === cat);
+    return await resFiltrados;
 }
 
 function saludarUsuario(nombre) {
@@ -36,16 +33,24 @@ function ocultarSpinner() {
 
 function crearProductoHTML(producto) {
     return `
-    <div class="col-md-6 " data-aos="fade-up">
-        <div class="card mb-4">
-            <img src="${producto.image}" class="card-img-top" alt="${producto.title}" style="width: 200px; height: 200px; object-fit: cover; margin: auto;">
-            <div class="card-body">
-                <h5 class="card-title">${producto.title}</h5>
-                <p class="card-text" style="height: 90px; overflow: hidden; text-overflow: ellipsis;">${producto.description}</p>
-                <p class="card-text"><strong>Precio: $${producto.price}</strong></p>
-                <div class="d-flex align-items-center justify-content-center gap-2">
-                    <button class="agregar btn btn-primary" data-id="${producto.id}">Agregar al carrito</button>
-                    <div class="input-group" style="max-width: 160px;">
+    <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up">
+        <div class="card h-100 shadow rounded-4 border-0">
+            <div class="text-center p-3">
+                <img src="${API_BASE + '/' + producto.path}" class="img-fluid rounded-3" alt="${producto.nombre}"
+                    style="width: 200px; height: 200px; object-fit: cover;">
+            </div>
+
+            <div class="card-body d-flex flex-column justify-content-between px-4 pb-4">
+                <div>
+                    <h5 class="card-title fw-bold text-primary">${producto.nombre}</h5>
+                    <p class="card-text text-secondary" style="height: 90px; overflow: hidden; text-overflow: ellipsis;">
+                    ${producto.descripcion}
+                    </p>
+                    <p class="card-text mt-2"><strong>Precio: $${producto.precio}</strong></p>
+                </div>
+                <div class="d-flex flex-column gap-2 mt-3">
+                    <button class="agregar btn btn-primary w-100" data-id="${producto.id}">Agregar al carrito</button>
+                    <div class="input-group">
                         <button class="resta btn btn-outline-secondary" type="button">-</button>
                         <input type="number" class="cantidad form-control text-center" value="1" min="1">
                         <button class="sum btn btn-outline-secondary" type="button">+</button>
@@ -53,7 +58,8 @@ function crearProductoHTML(producto) {
                 </div>
             </div>
         </div>
-    </div>`;
+    </div>
+`;
 }
 
 function mostrarProductos(productos) {
@@ -130,8 +136,8 @@ function agregarEventos() {
                 const data = await obtenerProductoPorId(id);
                 agregarAlCarrito({
                     id: data.id.toString(),
-                    nombre: data.title,
-                    precio: parseFloat(data.price),
+                    nombre: data.nombre,
+                    precio: parseFloat(data.precio),
                     cantidad
                 });
 
@@ -171,7 +177,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
         const productos = await obtenerProductos();
-        const categorias = await obtenerCategorias();
+        const categorias = ["Tecnología","Accesorios"];
 
         mostrarCategorias(categorias, productos);
         mostrarProductos(productos);
