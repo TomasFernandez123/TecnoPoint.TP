@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Error <%= error.status %></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container error-container vh-100 d-flex justify-content-center align-items-center">
+    <div class="card shadow">
+      <div class="card-header bg-danger text-white">
+        <h1 class="h4">Error: <%= message %></h1>
+      </div>
+      <div class="card-body">
+        <h2 class="text-danger">Status: <%= error.status %></h2>
+        <pre><%= error.stack %></pre>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
