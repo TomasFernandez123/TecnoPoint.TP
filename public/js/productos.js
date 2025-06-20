@@ -168,8 +168,8 @@ function agregarAlCarrito(producto) {
     localStorage.setItem("carrito", JSON.stringify(carrito));
 }
 
+verificarSesion();
 document.addEventListener("DOMContentLoaded", async () => {
-    verificarSesion();
     AOS.init();
 
     const nombre = sessionStorage.getItem("nombre");
