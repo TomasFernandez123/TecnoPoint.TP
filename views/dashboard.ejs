@@ -81,6 +81,13 @@
                                                 class="btn btn-sm btn-primary">Editar</a>
                                             <button class="btn-eliminar btn btn-sm btn-danger"
                                                 data-id="<%= producto.id %>">Eliminar</button>
+                                            <% if(producto.activo) { %>
+                                                <button class="btn-estado btn btn-sm btn-warning"
+                                                    data-id="<%= producto.id %>">Desactivar</button>
+                                            <% } else { %>
+                                                <button class="btn-estado btn btn-sm btn-warning"
+                                                    data-id="<%= producto.id %>">Activar</button>
+                                            <% } %> 
                                         </div>
                                     </td>
                                 </tr>
@@ -105,6 +112,7 @@
             crossorigin="anonymous"></script>
         <script src="/js/varios.js"></script>
         <script src="/js/eliminar.js"></script>
+        <script src="/js/estado.js"></script>
 </body>
 
 </html>

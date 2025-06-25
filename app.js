@@ -23,6 +23,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+const session = require('express-session');
+app.use(session({
+  secret: "miClaveSecreta123",
+  resave: false,
+  saveUninitialized: false
+}));
+
 app.use('/api/productos', rutas);
 app.use('/admin', adminViewRoutes);
 

@@ -7,7 +7,7 @@ function verificarSesion() {
 const API_BASE = "http://localhost:3000";
 
 async function obtenerProductos() {
-    const res = await fetch(`${API_BASE}/api/productos`);
+    const res = await fetch(`${API_BASE}/api/productos/activos`);
     return await res.json();
 }
 
@@ -37,7 +37,7 @@ function crearProductoHTML(producto) {
         <div class="card h-100 shadow rounded-4 border-0">
             <div class="text-center p-3">
                 <img src="${API_BASE + '/' + producto.path}" class="img-fluid rounded-3" alt="${producto.nombre}"
-                    style="width: 200px; height: 200px; object-fit: cover;">
+                    style="width: 250px; height: 250px; object-fit: cover;">
             </div>
 
             <div class="card-body d-flex flex-column justify-content-between px-4 pb-4">
@@ -168,8 +168,8 @@ function agregarAlCarrito(producto) {
     localStorage.setItem("carrito", JSON.stringify(carrito));
 }
 
+verificarSesion();
 document.addEventListener("DOMContentLoaded", async () => {
-    verificarSesion();
     AOS.init();
 
     const nombre = sessionStorage.getItem("nombre");
