@@ -1,5 +1,6 @@
 const ProductoManager = require("../../models/Producto");
-const usuarioModel = require("../../models/adminModel");
+const {Usuario} = require('../../models');
+
 const bcrypt = require('bcrypt');
 
 exports.mostrarDashboard = async (req, res) => {
@@ -44,7 +45,7 @@ exports.registrar = async (request, response) => {
     try {
         const { nombre, correo, clave } = request.body;
 
-        const existe = await usuarioModel.findOne({ where: { correo } });
+        const existe = await Usuario.findOne({ where: { correo } });
 
         if (existe) {
             return response.render("registro", {titulo: "REGISTRO", error: "El correo ya existe" })
@@ -52,7 +53,7 @@ exports.registrar = async (request, response) => {
 
         const hash = await bcrypt.hash(clave, 10);
 
-        await usuarioModel.create({ nombre, correo, clave: hash });
+        await Usuario.create({ nombre, correo, clave: hash });
 
         response.redirect("/admin/login");
 
@@ -64,11 +65,10 @@ exports.registrar = async (request, response) => {
 };
 
 exports.login = async (request, response) => {
-
     try {
         const { correo, clave } = request.body;
 
-        const usuario = await usuarioModel.findOne({ where: { correo } });
+        const usuario = await Usuario.findOne({ where: { correo } });
 
         if (!usuario || !(await bcrypt.compare(clave, usuario.clave))) {
             return response.render("login", { titulo: "LOGIN", error: "Credenciales invalidas" })

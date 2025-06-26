@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const mime = require("mime-types");
 
-const Producto = require("./productoModel");
+const { Producto } = require("../models");
 
 class ProductoManager {
   static async obtenerProductos() {
@@ -92,7 +92,7 @@ class ProductoManager {
 
       await producto.save();
 
-      if(producto.activo) {
+      if(!producto.activo) {
         return { exito: true, mensaje: `Producto ${id} desactivado correctamente.` };
       }
 

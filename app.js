@@ -7,7 +7,7 @@ var cors = require('cors');
 
 var rutas = require('./routes/api/rutas'); // Importing the custom routes
 var adminViewRoutes = require('./routes/views/admin');
-
+var ventasRoutes = require('./routes/api/ventas')
 
 var app = express();
 
@@ -32,6 +32,7 @@ app.use(session({
 
 app.use('/api/productos', rutas);
 app.use('/admin', adminViewRoutes);
+app.use('/ventas', ventasRoutes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

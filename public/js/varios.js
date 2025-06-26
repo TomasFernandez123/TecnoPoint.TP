@@ -33,3 +33,20 @@ function limpiarForm() {
     document.getElementById("precio").value = "";
     document.getElementById("foto").value = "";
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Aplicar el modo guardado al cargar
+    const temaGuardado = localStorage.getItem("tema") || "claro";
+    if (temaGuardado === "oscuro") {
+        document.body.classList.add("oscuro");
+    }
+    // Botón para cambiar modo
+    const toggleBtn = document.getElementById("toggle-tema");
+    if (toggleBtn) {
+        toggleBtn.addEventListener("click", () => {
+            document.body.classList.toggle("oscuro");
+            const nuevoTema = document.body.classList.contains("oscuro") ? "oscuro" : "claro";
+            localStorage.setItem("tema", nuevoTema);
+        });
+    }
+});

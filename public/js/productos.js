@@ -50,6 +50,7 @@ function crearProductoHTML(producto) {
                 </div>
                 <div class="d-flex flex-column gap-2 mt-3">
                     <button class="agregar btn btn-primary w-100" data-id="${producto.id}">Agregar al carrito</button>
+                    <button onclick="eliminarDelCarrito('${producto.id}')" class="btn btn-danger w-100">🗑 Eliminar del carrito</button>
                     <div class="input-group">
                         <button class="resta btn btn-outline-secondary" type="button">-</button>
                         <input type="number" class="cantidad form-control text-center" value="1" min="1">
@@ -168,6 +169,13 @@ function agregarAlCarrito(producto) {
     localStorage.setItem("carrito", JSON.stringify(carrito));
 }
 
+function eliminarDelCarrito(idProducto) {
+    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    carrito = carrito.filter(producto => producto.id !== idProducto);
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    alert('Producto eliminado del carrito');
+}
+
 verificarSesion();
 document.addEventListener("DOMContentLoaded", async () => {
     AOS.init();
@@ -187,3 +195,4 @@ document.addEventListener("DOMContentLoaded", async () => {
         ocultarSpinner();
     }
 });
+

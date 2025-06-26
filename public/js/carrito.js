@@ -127,5 +127,55 @@ function finalizarCompra() {
         return;
     }
 
-    window.location.href = "ticket.html";
+    venta = {
+        nombre: sessionStorage.getItem("nombre"),
+        productos: []
+    }
+
+    carrito.forEach(producto => {
+        venta.productos.push({ id: producto.id, cantidad: producto.cantidad });
+    });
+
+    registrarVenta(venta);
 }
+
+async function registrarVenta(obj) {
+    try {
+        const respuesta = await fetch('/ventas/registrar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(obj)
+        });
+
+        const data = await respuesta.json();
+
+        if (respuesta.ok) {
+            console.log('Venta registrada:', data);
+            Swal.fire({
+                icon: 'success',
+                title: '¡Compra realizada!',
+                text: `ID de venta: ${data.ventaId}`
+            });
+
+            window.location.href = 'ticket.html';
+
+        } else {
+            console.error('Error en el servidor:', data);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al registrar venta',
+                text: data.mensaje || 'Intenta nuevamente más tarde'
+            });
+        }
+    } catch (error) {
+        console.error('Error al conectar:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Fallo de conexión',
+            text: 'No se pudo conectar con el servidor'
+        });
+    }
+}
+
