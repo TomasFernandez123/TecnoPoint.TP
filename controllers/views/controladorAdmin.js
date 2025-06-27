@@ -1,16 +1,11 @@
 const ProductoManager = require("../../models/Producto");
-const {Usuario} = require('../../models');
+const {Venta, Usuario, Producto} = require('../../models');
 
 const bcrypt = require('bcrypt');
 
 exports.mostrarDashboard = async (req, res) => {
     const productos = await ProductoManager.obtenerProductos();
     res.render("dashboard", { productos });
-};
-
-exports.mostrarProductos = async (req, res) => {
-    const productos = await ProductoManager.obtenerProductos();
-    res.render("productos", { productos });
 };
 
 exports.mostrarFormularioAlta = (req, res) => {
@@ -89,4 +84,22 @@ exports.logout = async (request, response) => {
     request.session.destroy(
         () => response.redirect("/admin/login")
     );
+}
+
+exports.mostrarVentas = async (req, res) => {
+  try {
+    const ventas = await Venta.findAll({
+      include: {
+        model: Producto,
+        through: {
+          attributes: ['cantidad']
+        }
+      }
+    });
+
+    res.render("ventas", { ventas });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error al obtener las ventas', error: error.message });
+  }
 }

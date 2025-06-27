@@ -76,3 +76,4 @@ exports.obtenerVentas = async (req, res) => {
     res.status(500).json({ mensaje: 'Error al obtener las venta', error: error.message });
   }
 };
+

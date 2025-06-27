@@ -9,11 +9,11 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
-<body class="d-flex flex-column min-vh-100 bg-light">
+<body class="d-flex flex-column min-vh-100 bg-body-tertiary">
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg bg-white shadow-sm">
-        <div class="container">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary shadow-sm">
+        <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center gap-2" href="/">
                 <img src="/assets/logo.png" alt="Logo TecnoPoint" class="navbar-brand-logo" style="height: 40px;">
                 <span class="fw-bold">TecnoPoint</span>
@@ -25,9 +25,11 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link active fw-bold text-primary" href="#">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin/ventas">Ventas</a></li>
                     <li class="nav-item"><a class="nav-link" href="/admin/productos/nuevo">Alta Producto</a></li>
                     <li class="nav-item"><a class="nav-link" href="/admin/logout">Cerrar sesión</a></li>
                 </ul>
+                <button id="toggle-tema" class="btn btn-outline-secondary">🌗 Cambiar tema</button>
             </div>
         </div>
     </nav>
@@ -36,10 +38,9 @@
     <main class="container my-5 flex-grow-1">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="fw-bold text-secondary">Panel de Productos</h1>
-            <a class="btn btn-outline-primary" href="/admin/productos">Cambiar vista</a>
         </div>
 
-        <div class="table-responsive rounded shadow-sm bg-white p-3">
+        <div class="table-responsive rounded shadow-sm p-3">
             <table class="table table-hover align-middle">
                 <thead class="table-dark text-center">
                     <tr>

@@ -29,7 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
         tbody.appendChild(fila);
     });
 
-    // Muestra el total final
     document.getElementById("totalFinal").textContent = total.toFixed(2);
 
     document.getElementById("salir").addEventListener("click", () => {
@@ -46,3 +45,17 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("fechaActual").textContent = fecha;
     document.getElementById("horaActual").textContent = hora;
 });
+
+function descargarPDF() {
+  const element = document.querySelector(".card"); // El contenedor del ticket
+
+  const opciones = {
+    margin:       0,
+    filename:     'ticket.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2 },
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+
+  html2pdf().set(opciones).from(element).save();
+}

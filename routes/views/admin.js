@@ -6,8 +6,6 @@ const protegerRuta = require("../../middlewares/verificar.js");
 // Ruta al panel principal
 router.get("/dashboard", protegerRuta,adminViews.mostrarDashboard);
 
-router.get("/productos", protegerRuta,adminViews.mostrarProductos);
-
 // Ruta al formulario de alta
 router.get("/productos/nuevo", protegerRuta,adminViews.mostrarFormularioAlta);
 
@@ -24,5 +22,7 @@ router.post("/registro",adminViews.registrar);
 
 //LOGOUT
 router.get("/logout", adminViews.logout);
+
+router.get("/ventas", protegerRuta, adminViews.mostrarVentas)
 
 module.exports = router;
