@@ -72,5 +72,4 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("¡Ha ocurrido un ERROR al enviar el formulario!");
         }
     })
-
 });

@@ -1,35 +1,59 @@
+const API_BASE = "http://localhost:3000";
+
+let categoriaSeleccionada = null;
+
 function verificarSesion() {
     if (!sessionStorage.getItem("nombre")) {
         window.location.href = "index.html";
     }
 }
 
-const API_BASE = "http://localhost:3000";
+document.addEventListener("DOMContentLoaded", async () => {
+    verificarSesion();
 
-async function obtenerProductos() {
-    const res = await fetch(`${API_BASE}/api/productos/activos`);
-    return await res.json();
+    const nombre = sessionStorage.getItem("nombre");
+    saludarUsuario(nombre);
+    listarProductos();
+});
+
+async function listarProductos(page = 1) {
+    AOS.init();
+
+    try {
+        const productosRep = await obtenerProductosPaginados(page, categoriaSeleccionada);
+        const productos = productosRep.productos;;
+        const categorias = ["Tecnología", "Accesorios"];
+
+        mostrarCategorias(categorias, productos);
+        mostrarProductos(productos);
+
+        const totalPaginas = productosRep.paginasTotales;
+        crearBotonesPaginacion(page, totalPaginas);
+        document.getElementById("paginaActual").textContent = page;
+    } catch (e) {
+        console.error("Error al cargar datos:", e);
+    } finally {
+        ocultarSpinner();
+    }
 }
 
-async function obtenerProductoPorId(id) {
-    const res = await fetch(`${API_BASE}/api/productos/${id}`);
-    return await res.json();
+function crearBotonesPaginacion(paginaActual, totalPaginas) {
+    const contenedor = document.getElementById("paginacion");
+    contenedor.innerHTML = `
+        <button id="btnAnterior" class="btn btn-outline-primary" ${paginaActual === 1 ? "disabled" : ""}>Anterior</button>
+        <span class="mx-2 fw-semibold">Página ${paginaActual}</span>
+        <button id="btnSiguiente" class="btn btn-outline-primary" ${paginaActual === totalPaginas ? "disabled" : ""}>Siguiente</button>
+    `;
+
+    document.getElementById("btnAnterior").addEventListener("click", () => {
+        if (paginaActual > 1) listarProductos(paginaActual - 1);
+    });
+
+    document.getElementById("btnSiguiente").addEventListener("click", () => {
+        if (paginaActual < totalPaginas) listarProductos(paginaActual + 1);
+    });
 }
 
-async function obtenerProductosPorCategoria(cat) {
-    const res = await obtenerProductos();
-
-    const resFiltrados = res.filter(p => p.categoria === cat);
-    return await resFiltrados;
-}
-
-function saludarUsuario(nombre) {
-    document.getElementById("saludo").textContent += nombre;
-}
-
-function ocultarSpinner() {
-    document.getElementById("spinner").style.display = "none";
-}
 
 function crearProductoHTML(producto) {
     return `
@@ -69,7 +93,7 @@ function mostrarProductos(productos) {
     agregarEventos();
 }
 
-function mostrarCategorias(categorias, todosLosProductos) {
+function mostrarCategorias(categorias, productosActuales) {
     const contenedor = document.getElementById("categorias");
     contenedor.innerHTML = '';
 
@@ -81,27 +105,28 @@ function mostrarCategorias(categorias, todosLosProductos) {
     };
 
     const btnTodos = crearBoton("Todos", "btn btn-outline-primary");
-    marcarActivo(btnTodos);
+    if (!categoriaSeleccionada) marcarActivo(btnTodos);
+
     btnTodos.addEventListener("click", () => {
-        mostrarProductos(todosLosProductos);
+        categoriaSeleccionada = null;
+        listarProductos(1); 
         marcarActivo(btnTodos);
     });
     contenedor.appendChild(btnTodos);
 
     categorias.forEach(cat => {
         const btn = crearBoton(capitalizar(cat));
-        btn.addEventListener("click", async () => {
-            try {
-                const productosCat = await obtenerProductosPorCategoria(cat);
-                mostrarProductos(productosCat);
-                marcarActivo(btn);
-            } catch (e) {
-                alert("Error al cargar categoría");
-            }
+        if (categoriaSeleccionada === cat) marcarActivo(btn);
+
+        btn.addEventListener("click", () => {
+            categoriaSeleccionada = cat;
+            listarProductos(1); 
+            marcarActivo(btn);
         });
         contenedor.appendChild(btn);
     });
 }
+
 
 function marcarActivo(btnSeleccionado) {
     document.querySelectorAll("#categorias button").forEach(btn => btn.classList.remove("active"));
@@ -176,23 +201,51 @@ function eliminarDelCarrito(idProducto) {
     alert('Producto eliminado del carrito');
 }
 
-verificarSesion();
-document.addEventListener("DOMContentLoaded", async () => {
-    AOS.init();
-
-    const nombre = sessionStorage.getItem("nombre");
-    saludarUsuario(nombre);
-
+async function cargarProductos(page = 1) {
     try {
-        const productos = await obtenerProductos();
-        const categorias = ["Tecnología","Accesorios"];
+        const productosRep = await obtenerProductosPaginados(page);
+        const productos = productosRep.productos;
 
-        mostrarCategorias(categorias, productos);
         mostrarProductos(productos);
-    } catch (e) {
-        console.error("Error al cargar datos:", e);
-    } finally {
-        ocultarSpinner();
     }
-});
+    catch (error) {
+        console.error("Error al cargar productos:", error);
+    }
+}
+
+// FUNCIONES TIPO FETCH:
+async function obtenerProductos() {
+    const res = await fetch(`${API_BASE}/api/productos/activos`);
+    return await res.json();
+}
+
+async function obtenerProductosPaginados(pagina, categoria = null) {
+    let url = `${API_BASE}/api/productos/activos/page?pagina=${pagina}&limite=6`;
+    if (categoria) {
+        url += `&categoria=${encodeURIComponent(categoria)}`;
+    }
+
+    const res = await fetch(url);
+    return await res.json();
+}
+
+async function obtenerProductoPorId(id) {
+    const res = await fetch(`${API_BASE}/api/productos/${id}`);
+    return await res.json();
+}
+
+async function obtenerProductosPorCategoria(cat) {
+    const res = await obtenerProductos();
+    const resFiltrados = res.filter(p => p.categoria === cat);
+
+    return await resFiltrados;
+}
+
+function saludarUsuario(nombre) {
+    document.getElementById("saludo").textContent += nombre;
+}
+
+function ocultarSpinner() {
+    document.getElementById("spinner").style.display = "none";
+}
 

@@ -18,6 +18,46 @@ const getActives = async (req, res) => {
     }
 };
 
+const getControllerByPage = async (req, res) => {
+    try {
+        const pagina = parseInt(req.query.pagina) || 1;
+        const limite = parseInt(req.query.limite) || 5;
+        const productos = await ProductoManager.obtenerProductosPaginados(pagina, limite);
+
+        if (productos) {
+            res.json(productos);
+        } else {
+            res.status(404).json({ mensaje: "No se encontraron productos" });
+        }
+    } catch (err) {
+        res.status(500).json({ mensaje: "Error al obtener productos", error: err.message });
+    }
+};
+
+const getControllerActivesByPage = async (req, res) => {
+    try {
+        const pagina = parseInt(req.query.pagina) || 1;
+        const limite = parseInt(req.query.limite) || 5;
+        const categoria = req.query.categoria;
+
+        // armás el filtro dinámico
+        const where = { activo: true };
+        if (categoria) {
+            where.categoria = categoria;
+        }
+
+        const productos = await ProductoManager.obtenerProductosPaginados(pagina, limite, where);
+
+        if (productos) {
+            res.json(productos);
+        } else {
+            res.status(404).json({ mensaje: "No se encontraron productos activos" });
+        }
+    } catch (err) {
+        res.status(500).json({ mensaje: "Error al obtener productos activos", error: err.message });
+    }
+}
+
 const getControllerById = async (req, res) => {
     try {
         const id = req.params.id;
@@ -91,5 +131,7 @@ module.exports = {
     putController,
     deleteController,
     estadoController,
-    getActives
+    getActives,
+    getControllerByPage,
+    getControllerActivesByPage
 };

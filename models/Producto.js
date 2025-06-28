@@ -9,12 +9,30 @@ class ProductoManager {
     return await Producto.findAll();
   }
 
+  static async obtenerProductosPaginados(pagina = 1, limite = 5, where = null) {
+    const offset = (pagina - 1) * limite;
+
+    const { count, rows } = await Producto.findAndCountAll({
+      where: where || {},
+      offset,
+      limit: limite,
+      order: [['nombre', 'ASC']]
+    });
+
+    return {
+      productos: rows,
+      total: count,
+      pagina: parseInt(pagina),
+      paginasTotales: Math.ceil(count / limite)
+    };
+  }
+
   static async obtenerProductoPorId(id) {
     return await Producto.findByPk(id);
   }
 
   static async obtenerProductosActivos() {
-    return await Producto.findAll({where: {activo: true}});
+    return await Producto.findAll({ where: { activo: true } });
   }
 
   static async agregarProducto(datos, file) {
@@ -87,12 +105,12 @@ class ProductoManager {
     try {
       const producto = await Producto.findByPk(id);
       if (!producto) return { exito: false, mensaje: "Producto no encontrado" };
-      
+
       producto.activo = !producto.activo;
 
       await producto.save();
 
-      if(!producto.activo) {
+      if (!producto.activo) {
         return { exito: true, mensaje: `Producto ${id} desactivado correctamente.` };
       }
 
