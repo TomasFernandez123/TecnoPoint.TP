@@ -1,7 +1,16 @@
+/**
+ * Script que gestiona la activación o desactivación (cambio de estado) de un producto
+ * desde el panel de administración. Muestra confirmación con Swal y realiza la acción vía API.
+ */
 document.addEventListener("DOMContentLoaded", () => {
+
+    // Recorre todos los botones de cambio de estado (activar/desactivar)
     document.querySelectorAll(".btn-estado").forEach(btn => {
+
+        // Evento click sobre el botón de estado. Dispara la confirmación y realiza la petición.   
         btn.addEventListener("click", async (e) => {
             const id = e.target.getAttribute("data-id");
+            
             // Mostrar modal de confirmación
             const confirmacion = await Swal.fire({
                 title: '¿Estás seguro?',
@@ -21,9 +30,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 opciones = {
                     method: "PUT"
                 }
-
+                
+                // Enviar solicitud al backend para modificar el estado
                 const res = await manejadorFetch(URL_API + `/api/productos/estado/${id}`, opciones)
-
                 const data = await res.json();
 
                 if (res.ok) {

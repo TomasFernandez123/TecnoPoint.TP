@@ -1,5 +1,14 @@
+/**
+ * Controladores para la gestión de productos.
+ * Manejan operaciones CRUD, paginación, filtrado por estado/categoría, y carga de archivos.
+ */
 const ProductoManager = require("../../models/Producto");
 
+
+/**
+ * Obtiene todos los productos.
+ * @route GET /api/productos
+ */
 const getController = async (req, res) => {
     try {
         const productos = await ProductoManager.obtenerProductos();
@@ -9,6 +18,10 @@ const getController = async (req, res) => {
     }
 };
 
+/**
+ * Obtiene todos los productos activos.
+ * @route GET /api/productos/activos
+ */
 const getActives = async (req, res) => {
     try {
         const productos = await ProductoManager.obtenerProductosActivos();
@@ -18,8 +31,14 @@ const getActives = async (req, res) => {
     }
 };
 
+/**
+ * Obtiene productos paginados.
+ * @route GET /api/productos/page?pagina=1&limite=5
+ */
 const getControllerByPage = async (req, res) => {
     try {
+        // obtenés los parámetros de paginación
+        // si no se envían, se usa 1 para página y 5 para límite
         const pagina = parseInt(req.query.pagina) || 1;
         const limite = parseInt(req.query.limite) || 5;
         const productos = await ProductoManager.obtenerProductosPaginados(pagina, limite);
@@ -34,13 +53,17 @@ const getControllerByPage = async (req, res) => {
     }
 };
 
+/** * 
+ * Obtiene productos activos paginados, con opción de filtrar por categoría.
+ * @route GET /api/productos/activos/page?pagina=1&limite=5&categoria=tecnologia
+ */
 const getControllerActivesByPage = async (req, res) => {
     try {
         const pagina = parseInt(req.query.pagina) || 1;
         const limite = parseInt(req.query.limite) || 5;
         const categoria = req.query.categoria;
 
-        // armás el filtro dinámico
+        // armas el filtro dinámico
         const where = { activo: true };
         if (categoria) {
             where.categoria = categoria;
@@ -58,6 +81,10 @@ const getControllerActivesByPage = async (req, res) => {
     }
 }
 
+/**
+ * Obtiene un producto por ID.
+ * @route GET /api/productos/:id
+ */
 const getControllerById = async (req, res) => {
     try {
         const id = req.params.id;
@@ -73,6 +100,13 @@ const getControllerById = async (req, res) => {
     }
 };
 
+/**
+ * Agrega un nuevo producto.
+ * Espera un archivo y un objeto JSON serializado en el campo `obj_producto`.
+ * @route POST /api/productos
+ * @param {File} file - Imagen del producto
+ * @param {string} obj_producto - Objeto JSON del producto (como string)
+ */
 const postController = async (req, res) => {
     const file = req.file;
     const obj = req.body.obj_producto;
@@ -95,6 +129,12 @@ const postController = async (req, res) => {
     }
 };
 
+/**
+ * Actualiza un producto existente.
+ * Espera un archivo y un objeto JSON serializado en el campo `obj_producto`.
+ * @route PUT /api/productos/:id
+ * @param {string} id - ID del producto a actualizar
+ */
 const putController = async (req, res) => {
     const id = req.params.id;
     const file = req.file;
@@ -110,6 +150,10 @@ const putController = async (req, res) => {
     }
 };
 
+/**
+ * Elimina un producto por ID.
+ * @route DELETE /api/productos/:id
+ */
 const deleteController = async (req, res) => {
     const id = req.params.id;
     const resultado = await ProductoManager.eliminarProducto(id);
@@ -117,6 +161,11 @@ const deleteController = async (req, res) => {
     res.status(resultado.exito ? 200 : 404).json(resultado);
 };
 
+
+/**
+ * Cambia el estado (activo/inactivo) de un producto.
+ * @route PUT /api/productos/estado/:id
+ */
 const estadoController = async (req, res) => {
     const id = req.params.id;
     const resultado = await ProductoManager.cambiarEstado(id);

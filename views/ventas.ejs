@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" data-bs-theme="light">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
@@ -45,7 +45,7 @@
                             <strong>Cliente:</strong>
                             <%= venta.nombre %> |
                                 <strong>Fecha:</strong>
-                                <%= new Date(venta.fecha).toLocaleDateString() %> |
+                                <%= venta.fecha %> |
                                     <strong>Total:</strong> $<%= venta.total.toLocaleString() %>
                         </div>
                         <div class="card-body">

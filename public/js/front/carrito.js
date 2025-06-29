@@ -1,15 +1,21 @@
-// Redirección si no hay nombre en sesión
 if (!sessionStorage.getItem("nombre")) {
     window.location.href = "index.html";
 }
 
+/**
+ * Evento al cargar el DOM: muestra el carrito y asigna eventos a botones principales.
+ */
 document.addEventListener("DOMContentLoaded", () => {
     mostrarCarrito();
     document.getElementById("vaciar-carrito").addEventListener("click", vaciarCarrito);
     document.getElementById("generarTicket").addEventListener("click", finalizarCompra);
 });
 
-// Mostrar el contenido del carrito
+
+/**
+ * Muestra los productos almacenados en el carrito y su total.
+ * Si está vacío, muestra un mensaje.
+ */
 function mostrarCarrito() {
     const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     const contenedor = document.getElementById("carrito-items");
@@ -46,9 +52,11 @@ function mostrarCarrito() {
     asignarEventos(carrito);
 }
 
-// Asigna eventos a los botones dentro del carrito
+/**
+ * Asigna eventos a los botones de eliminar, sumar, restar y modificar cantidad.
+ * @param {Array} carrito - Lista de productos en el carrito.
+ */
 function asignarEventos(carrito) {
-    // Eliminar producto
     document.querySelectorAll(".eliminar-item").forEach(btn => {
         btn.addEventListener("click", () => {
             const id = btn.dataset.id;
@@ -58,7 +66,6 @@ function asignarEventos(carrito) {
         });
     });
 
-    // Cambiar cantidad manualmente
     document.querySelectorAll(".cantidad-input").forEach(input => {
         input.addEventListener("change", () => {
             const id = input.dataset.id;
@@ -77,7 +84,6 @@ function asignarEventos(carrito) {
         });
     });
 
-    // Botón sumar
     document.querySelectorAll(".btn-sumar").forEach(btn => {
         btn.addEventListener("click", () => {
             const id = btn.dataset.id;
@@ -92,7 +98,6 @@ function asignarEventos(carrito) {
         });
     });
 
-    // Botón restar
     document.querySelectorAll(".btn-restar").forEach(btn => {
         btn.addEventListener("click", () => {
             const id = btn.dataset.id;
@@ -108,13 +113,15 @@ function asignarEventos(carrito) {
     });
 }
 
-// Vaciar carrito
 function vaciarCarrito() {
     localStorage.removeItem("carrito");
     mostrarCarrito();
 }
 
-// Finalizar compra
+/**
+ * Finaliza la compra actual validando que haya productos
+ * y armando el objeto venta para enviarlo al backend.
+ */
 function finalizarCompra() {
     const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
@@ -139,6 +146,10 @@ function finalizarCompra() {
     registrarVenta(venta);
 }
 
+/**
+ * Envía la venta al backend y redirige al ticket si es exitosa.
+ * @param {Object} obj - Objeto con los datos de la venta.
+ */
 async function registrarVenta(obj) {
     try {
         const respuesta = await fetch('/ventas/registrar', {
@@ -152,23 +163,17 @@ async function registrarVenta(obj) {
         const data = await respuesta.json();
 
         if (respuesta.ok) {
-            console.log('Venta registrada:', data);
             Swal.fire({
                 icon: 'success',
                 title: '¡Compra realizada!',
-                text: `ID de venta: ${data.ventaId}`
-            });
-
-            window.location.href = 'ticket.html';
-
-        } else {
-            console.error('Error en el servidor:', data);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error al registrar venta',
-                text: data.mensaje || 'Intenta nuevamente más tarde'
+                text: `ID de venta: ${data.ventaId}`,
+                timer: 2000,
+                willClose: () => {
+                    window.location.href = 'ticket.html';
+                }
             });
         }
+
     } catch (error) {
         console.error('Error al conectar:', error);
         Swal.fire({

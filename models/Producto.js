@@ -1,3 +1,8 @@
+/**
+ * Módulo de lógica de negocio para productos.
+ * Provee métodos CRUD, manejo de archivos de imagen y estado activo/inactivo.
+ */
+
 const fs = require("fs");
 const path = require("path");
 const mime = require("mime-types");
@@ -9,6 +14,13 @@ class ProductoManager {
     return await Producto.findAll();
   }
 
+  /**
+   * Obtiene productos paginados, opcionalmente filtrados.
+   * @param {number} pagina - Número de página
+   * @param {number} limite - Cantidad por página
+   * @param {object|null} where - Filtro opcional
+   * @returns {Promise<Object>} Productos, total, página actual y páginas totales
+   */
   static async obtenerProductosPaginados(pagina = 1, limite = 5, where = null) {
     const offset = (pagina - 1) * limite;
 
@@ -35,6 +47,12 @@ class ProductoManager {
     return await Producto.findAll({ where: { activo: true } });
   }
 
+  /**
+   * Agrega un nuevo producto y guarda su imagen.
+   * @param {Object} datos - Datos del producto
+   * @param {Object} file - Archivo de imagen subido
+   * @returns {Promise<Producto|null>} Producto creado o null en caso de error
+   */
   static async agregarProducto(datos, file) {
     try {
       datos.id = Date.now().toString();
@@ -43,6 +61,7 @@ class ProductoManager {
       const extension = mime.extension(file.mimetype);
       const nuevoPath = path.join(file.destination, `${datos.id}.${extension}`);
 
+      // Determina extensión del archivo (ej. .jpg, .png) según el mimetype
       fs.renameSync(file.path, nuevoPath);
       datos.path = `fotos/${datos.id}.${extension}`;
 
@@ -53,12 +72,19 @@ class ProductoManager {
     }
   }
 
+  /**
+   * Actualiza los datos de un producto existente. También reemplaza la imagen si se proporciona una nueva.
+   * @param {string|number} id - ID del producto a actualizar
+   * @param {Object} nuevosDatos - Nuevos datos del producto
+   * @param {Object|null} file - Nuevo archivo de imagen (opcional)
+   * @returns {Promise<Object>} Resultado con éxito o mensaje de error
+   */
   static async actualizarProducto(id, nuevosDatos, file) {
     try {
       const producto = await Producto.findByPk(id);
       if (!producto) return { exito: false, mensaje: "Producto no encontrado" };
 
-      Object.assign(producto, nuevosDatos);
+      Object.assign(producto, nuevosDatos); // Actualiza los campos del producto con los nuevos datos
 
       if (file) {
         const extension = mime.extension(file.mimetype);
@@ -80,6 +106,11 @@ class ProductoManager {
     }
   }
 
+  /**
+   * Elimina un producto y su imagen asociada si existe.
+   * @param {string|number} id - ID del producto a eliminar
+   * @returns {Promise<Object>} Resultado con éxito o mensaje de error
+   */
   static async eliminarProducto(id) {
     try {
       const producto = await Producto.findByPk(id);
@@ -101,6 +132,11 @@ class ProductoManager {
     }
   }
 
+   /**
+   * Cambia el estado de un producto entre activo/inactivo.
+   * @param {string|number} id - ID del producto
+   * @returns {Promise<Object>} Resultado con éxito o mensaje de error
+   */
   static async cambiarEstado(id) {
     try {
       const producto = await Producto.findByPk(id);

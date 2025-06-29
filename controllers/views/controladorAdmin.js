@@ -1,17 +1,34 @@
+/**
+ * Controlador de vistas y lógica para el panel de administración.
+ * Maneja autenticación de usuarios, renderizado de formularios, dashboard y visualización de ventas.
+ */
 const ProductoManager = require("../../models/Producto");
 const {Venta, Usuario, Producto} = require('../../models');
 
 const bcrypt = require('bcrypt');
 
+/**
+ * Renderiza el dashboard de administración con el listado de productos.
+ * @route GET /admin/dashboard
+ */
 exports.mostrarDashboard = async (req, res) => {
     const productos = await ProductoManager.obtenerProductos();
     res.render("dashboard", { productos });
 };
 
+/**
+ * Renderiza el formulario para dar de alta un nuevo producto.
+ * @route GET /admin/productos/nuevo
+ */
 exports.mostrarFormularioAlta = (req, res) => {
     res.render("productForm", { producto: null, esEdicion: false });
 };
 
+/**
+ * Renderiza el formulario de edición para un producto existente.
+ * @route GET /admin/productos/editar/:id
+ * @param {number} req.params.id - ID del producto a editar
+ */
 exports.mostrarFormularioEdicion = async (req, res) => {
     const id = parseInt(req.params.id);
     const producto = await ProductoManager.obtenerProductoPorId(id);
@@ -35,6 +52,11 @@ exports.mostrarRegistro = (request, response) => {
     response.render("registro", {titulo: titulo, error: null });
 };
 
+/**
+ * Registra un nuevo usuario administrador.
+ * Verifica si el correo ya existe, hashea la clave y crea el usuario.
+ * @route POST /admin/registro
+ */
 exports.registrar = async (request, response) => {
 
     try {
@@ -59,6 +81,11 @@ exports.registrar = async (request, response) => {
 
 };
 
+/**
+ * Inicia sesión de un usuario administrador.
+ * Verifica credenciales y guarda sesión.
+ * @route POST /admin/login
+ */
 exports.login = async (request, response) => {
     try {
         const { correo, clave } = request.body;
@@ -86,13 +113,17 @@ exports.logout = async (request, response) => {
     );
 }
 
+/**
+ * Muestra la lista de ventas realizadas, incluyendo productos y cantidades.
+ * @route GET /admin/ventas
+ */
 exports.mostrarVentas = async (req, res) => {
   try {
     const ventas = await Venta.findAll({
       include: {
         model: Producto,
         through: {
-          attributes: ['cantidad']
+          attributes: ['cantidad'] // solo quiero que me traigas este campo extra de la tabla intermedia
         }
       }
     });

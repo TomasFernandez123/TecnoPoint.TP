@@ -1,14 +1,9 @@
-const API_BASE = "http://localhost:3000";
-
-let categoriaSeleccionada = null;
-
-function verificarSesion() {
-    if (!sessionStorage.getItem("nombre")) {
-        window.location.href = "index.html";
-    }
-}
-
+/**
+ * Al cargar el DOM, inicializa animaciones, verifica sesión del usuario
+ * y muestra los productos disponibles.
+ */
 document.addEventListener("DOMContentLoaded", async () => {
+    AOS.init();
     verificarSesion();
 
     const nombre = sessionStorage.getItem("nombre");
@@ -16,9 +11,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     listarProductos();
 });
 
+/**
+ * Lista productos paginados por categoría, muestra la UI y la paginación.
+ * @param {number} [page=1] - Número de página actual.
+ */
 async function listarProductos(page = 1) {
-    AOS.init();
-
     try {
         const productosRep = await obtenerProductosPaginados(page, categoriaSeleccionada);
         const productos = productosRep.productos;;
@@ -37,6 +34,11 @@ async function listarProductos(page = 1) {
     }
 }
 
+/**
+ * Crea los botones de paginación y asigna eventos para cambiar de página.
+ * @param {number} paginaActual - Página actual.
+ * @param {number} totalPaginas - Cantidad total de páginas.
+ */
 function crearBotonesPaginacion(paginaActual, totalPaginas) {
     const contenedor = document.getElementById("paginacion");
     contenedor.innerHTML = `
@@ -54,7 +56,11 @@ function crearBotonesPaginacion(paginaActual, totalPaginas) {
     });
 }
 
-
+/**
+ * Genera el HTML de una tarjeta de producto.
+ * @param {Object} producto - Objeto producto.
+ * @returns {string} - HTML generado del producto.
+ */
 function crearProductoHTML(producto) {
     return `
     <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up">
@@ -87,12 +93,21 @@ function crearProductoHTML(producto) {
 `;
 }
 
+/**
+ * Muestra los productos en el contenedor principal.
+ * @param {Array} productos - Lista de productos.
+ */
 function mostrarProductos(productos) {
     const contenedor = document.getElementById("productos");
     contenedor.innerHTML = productos.map(crearProductoHTML).join('');
     agregarEventos();
 }
 
+/**
+ * Muestra los botones de categorías y permite filtrado.
+ * @param {Array} categorias - Lista de nombres de categoría.
+ * @param {Array} productosActuales - Productos actuales para mostrar.
+ */
 function mostrarCategorias(categorias, productosActuales) {
     const contenedor = document.getElementById("categorias");
     contenedor.innerHTML = '';
@@ -109,7 +124,7 @@ function mostrarCategorias(categorias, productosActuales) {
 
     btnTodos.addEventListener("click", () => {
         categoriaSeleccionada = null;
-        listarProductos(1); 
+        listarProductos(1);
         marcarActivo(btnTodos);
     });
     contenedor.appendChild(btnTodos);
@@ -120,14 +135,17 @@ function mostrarCategorias(categorias, productosActuales) {
 
         btn.addEventListener("click", () => {
             categoriaSeleccionada = cat;
-            listarProductos(1); 
+            listarProductos(1);
             marcarActivo(btn);
         });
         contenedor.appendChild(btn);
     });
 }
 
-
+/**
+ * Marca un botón de categoría como activo.
+ * @param {HTMLElement} btnSeleccionado - Botón seleccionado.
+ */
 function marcarActivo(btnSeleccionado) {
     document.querySelectorAll("#categorias button").forEach(btn => btn.classList.remove("active"));
     btnSeleccionado.classList.add("active");
@@ -137,6 +155,9 @@ function capitalizar(texto) {
     return texto.charAt(0).toUpperCase() + texto.slice(1);
 }
 
+/**
+ * Agrega eventos a botones: sumar, restar, agregar al carrito.
+ */
 function agregarEventos() {
     document.querySelectorAll(".sum").forEach(btn =>
         btn.addEventListener("click", () => {
@@ -181,6 +202,10 @@ function agregarEventos() {
     );
 }
 
+/**
+ * Agrega un producto al carrito y lo guarda en localStorage.
+ * @param {Object} producto - Producto a agregar.
+ */
 function agregarAlCarrito(producto) {
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
@@ -194,31 +219,32 @@ function agregarAlCarrito(producto) {
     localStorage.setItem("carrito", JSON.stringify(carrito));
 }
 
+/**
+ * Elimina un producto del carrito por ID.
+ * @param {string} idProducto - ID del producto a eliminar.
+ */
 function eliminarDelCarrito(idProducto) {
     let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-    carrito = carrito.filter(producto => producto.id !== idProducto);
-    localStorage.setItem('carrito', JSON.stringify(carrito));
-    alert('Producto eliminado del carrito');
-}
-
-async function cargarProductos(page = 1) {
-    try {
-        const productosRep = await obtenerProductosPaginados(page);
-        const productos = productosRep.productos;
-
-        mostrarProductos(productos);
-    }
-    catch (error) {
-        console.error("Error al cargar productos:", error);
+    const existente = carrito.find(item => item.id === idProducto);
+    if (existente) {
+        carrito = carrito.filter(producto => producto.id !== idProducto);
+        localStorage.setItem('carrito', JSON.stringify(carrito));
+        Swal.fire({
+            icon: 'success',
+            title: '¡Eliminado!',
+            text: 'El producto fue eliminado del carrito.',
+            showConfirmButton: false,
+            timer: 1000
+        });
     }
 }
 
-// FUNCIONES TIPO FETCH:
-async function obtenerProductos() {
-    const res = await fetch(`${API_BASE}/api/productos/activos`);
-    return await res.json();
-}
-
+/**
+ * Obtiene productos activos de la API en formato paginado.
+ * @param {number} pagina - Número de página.
+ * @param {string|null} [categoria=null] - Categoría a filtrar.
+ * @returns {Promise<Object>} - Productos paginados.
+ */
 async function obtenerProductosPaginados(pagina, categoria = null) {
     let url = `${API_BASE}/api/productos/activos/page?pagina=${pagina}&limite=6`;
     if (categoria) {
@@ -229,16 +255,14 @@ async function obtenerProductosPaginados(pagina, categoria = null) {
     return await res.json();
 }
 
+/**
+ * Obtiene los datos de un producto por su ID.
+ * @param {string|number} id - ID del producto.
+ * @returns {Promise<Object>} - Objeto del producto.
+ */
 async function obtenerProductoPorId(id) {
     const res = await fetch(`${API_BASE}/api/productos/${id}`);
     return await res.json();
-}
-
-async function obtenerProductosPorCategoria(cat) {
-    const res = await obtenerProductos();
-    const resFiltrados = res.filter(p => p.categoria === cat);
-
-    return await resFiltrados;
 }
 
 function saludarUsuario(nombre) {
@@ -249,3 +273,13 @@ function ocultarSpinner() {
     document.getElementById("spinner").style.display = "none";
 }
 
+function verificarSesion() {
+    if (!sessionStorage.getItem("nombre")) {
+        window.location.href = "index.html";
+    }
+}
+
+// Variables globales
+const API_BASE = "http://localhost:3000";
+
+let categoriaSeleccionada = null;
